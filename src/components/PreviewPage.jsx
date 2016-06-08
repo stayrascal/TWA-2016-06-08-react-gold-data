@@ -12,7 +12,7 @@ class PreviewPage extends React.Component {
 
     render() {
         return (
-            <div className="container preview-page hidden">
+            <div className="container preview-page">
                 <div className="row box">{this.renderItems()}</div>
             </div>
 

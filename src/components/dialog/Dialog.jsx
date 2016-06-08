@@ -3,10 +3,10 @@ import DialogBody from './DialogBody.jsx';
 import DialogHeader from './DialogHeader.jsx';
 import DialogFooter from './DialogFooter.jsx';
 
-class Dialog extends React.Component{
+class Dialog extends React.Component {
 
 
-    closeDialog (){
+    closeDialog() {
         $('#myModal').modal('toggle');
     }
 
@@ -14,7 +14,11 @@ class Dialog extends React.Component{
         return (
             <div className="modal fade" role="dialog" id="myModal">
                 <div className="modal-dialog">
-                    <DialogBody items={this.props.items} close={this.closeDialog} add={this.props.add}/>
+                    <DialogBody
+                        items={this.props.items}
+                        close={this.closeDialog}
+                        add={this.props.add}
+                    />
                 </div>
             </div>
         )

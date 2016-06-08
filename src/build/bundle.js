@@ -58,7 +58,7 @@
 
 	var _Controller2 = _interopRequireDefault(_Controller);
 
-	var _EditPage = __webpack_require__(175);
+	var _EditPage = __webpack_require__(174);
 
 	var _EditPage2 = _interopRequireDefault(_EditPage);
 
@@ -83,6 +83,7 @@
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
 
 	        _this.state = {
+	            status: 'edit',
 	            items: [{
 	                type: 'date',
 	                value: '2016-12-11',
@@ -97,9 +98,50 @@
 	    }
 
 	    _createClass(App, [{
-	        key: 'onEdit',
-	        value: function onEdit() {
+	        key: 'updateItem',
+	        value: function updateItem(itemIndex, value) {
+	            var item = this.state.items.filter(function (item) {
+	                return item.index === itemIndex;
+	            })[0];
+	            item.value = value;
 	            this.setState(this.state);
+	        }
+	    }, {
+	        key: 'addItem',
+	        value: function addItem(type) {
+	            var item = { 'type': type, 'value': '', 'index': new Date().getTime() };
+	            this.state.items.push(item);
+	            this.setState(this.state);
+	        }
+	    }, {
+	        key: 'removeItem',
+	        value: function removeItem(index) {
+	            var items = this.state.items.filter(function (item) {
+	                return item.index !== index;
+	            });
+	            this.setState({ items: items });
+	        }
+	    }, {
+	        key: 'changeStatus',
+	        value: function changeStatus(status) {
+	            this.setState({
+	                status: status
+	            });
+	        }
+	    }, {
+	        key: 'renderContent',
+	        value: function renderContent() {
+	            if (this.state.status === 'edit') {
+	                return _react2.default.createElement(_EditPage2.default, {
+	                    items: this.state.items,
+	                    edit: this.updateItem.bind(this),
+	                    remove: this.removeItem.bind(this)
+	                });
+	            } else {
+	                return _react2.default.createElement(_PreviewPage2.default, {
+	                    items: this.state.items
+	                });
+	            }
 	        }
 	    }, {
 	        key: 'render',
@@ -107,9 +149,12 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(_Controller2.default, { items: this.state.items, add: this.onEdit.bind(this) }),
-	                _react2.default.createElement(_EditPage2.default, { items: this.state.items, edit: this.onEdit.bind(this) }),
-	                _react2.default.createElement(_PreviewPage2.default, { items: this.state.items })
+	                _react2.default.createElement(_Controller2.default, {
+	                    items: this.state.items,
+	                    add: this.addItem.bind(this),
+	                    changeStatus: this.changeStatus.bind(this)
+	                }),
+	                this.renderContent()
 	            );
 	        }
 	    }]);
@@ -20407,11 +20452,7 @@
 
 	var _Dialog2 = _interopRequireDefault(_Dialog);
 
-	var _DialogButton = __webpack_require__(173);
-
-	var _DialogButton2 = _interopRequireDefault(_DialogButton);
-
-	var _EditOrView = __webpack_require__(174);
+	var _EditOrView = __webpack_require__(173);
 
 	var _EditOrView2 = _interopRequireDefault(_EditOrView);
 
@@ -20438,9 +20479,13 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'container' },
-	                _react2.default.createElement(_EditOrView2.default, null),
-	                _react2.default.createElement(_Dialog2.default, { items: this.props.items, add: this.props.add }),
-	                _react2.default.createElement(_DialogButton2.default, null)
+	                _react2.default.createElement(_EditOrView2.default, {
+	                    changeStatus: this.props.changeStatus
+	                }),
+	                _react2.default.createElement(_Dialog2.default, {
+	                    items: this.props.items,
+	                    add: this.props.add
+	                })
 	            );
 	        }
 	    }]);
@@ -20509,7 +20554,11 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'modal-dialog' },
-	                    _react2.default.createElement(_DialogBody2.default, { items: this.props.items, close: this.closeDialog, add: this.props.add })
+	                    _react2.default.createElement(_DialogBody2.default, {
+	                        items: this.props.items,
+	                        close: this.closeDialog,
+	                        add: this.props.add
+	                    })
 	                )
 	            );
 	        }
@@ -20567,10 +20616,8 @@
 	    }, {
 	        key: 'addItem',
 	        value: function addItem() {
-	            var component = { 'type': this.state.type, 'value': '', 'index': new Date().getTime() };
-	            this.props.items.push(component);
+	            this.props.add(this.state.type);
 	            this.props.close();
-	            this.props.add();
 	        }
 	    }, {
 	        key: 'render',
@@ -20763,6 +20810,232 @@
 /* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var EditOrView = function (_React$Component) {
+	    _inherits(EditOrView, _React$Component);
+
+	    function EditOrView() {
+	        _classCallCheck(this, EditOrView);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(EditOrView).apply(this, arguments));
+	    }
+
+	    _createClass(EditOrView, [{
+	        key: 'showEditPage',
+	        value: function showEditPage() {
+	            this.props.changeStatus('edit');
+	        }
+	    }, {
+	        key: 'showPreviewPage',
+	        value: function showPreviewPage() {
+	            this.props.changeStatus('preview');
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'row' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-md-6' },
+	                    _react2.default.createElement(
+	                        'button',
+	                        { type: 'button', className: 'btn btn-lg btn-block edit', onClick: this.showEditPage.bind(this) },
+	                        'Edit'
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-md-6' },
+	                    _react2.default.createElement(
+	                        'button',
+	                        { type: 'button', className: 'btn btn-lg btn-block preview', 'data-toggle': 'modal',
+	                            onClick: this.showPreviewPage.bind(this) },
+	                        'Preview'
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return EditOrView;
+	}(_react2.default.Component);
+
+	exports.default = EditOrView;
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Item = __webpack_require__(175);
+
+	var _Item2 = _interopRequireDefault(_Item);
+
+	var _DialogButton = __webpack_require__(176);
+
+	var _DialogButton2 = _interopRequireDefault(_DialogButton);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var EditPage = function (_React$Component) {
+	    _inherits(EditPage, _React$Component);
+
+	    function EditPage() {
+	        _classCallCheck(this, EditPage);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(EditPage).apply(this, arguments));
+	    }
+
+	    _createClass(EditPage, [{
+	        key: 'renderItems',
+	        value: function renderItems() {
+	            var _this2 = this;
+
+	            return this.props.items.map(function (item) {
+	                return _react2.default.createElement(_Item2.default, {
+	                    item: item,
+	                    key: item.index,
+	                    remove: _this2.props.remove,
+	                    edit: _this2.props.edit
+	                });
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'container edit-page' },
+	                _react2.default.createElement(_DialogButton2.default, null),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row box' },
+	                    this.renderItems()
+	                )
+	            );
+	        }
+	    }]);
+
+	    return EditPage;
+	}(_react2.default.Component);
+
+	exports.default = EditPage;
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Item = function (_React$Component) {
+	    _inherits(Item, _React$Component);
+
+	    function Item() {
+	        _classCallCheck(this, Item);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Item).apply(this, arguments));
+	    }
+
+	    _createClass(Item, [{
+	        key: "updateData",
+	        value: function updateData(e) {
+	            var value = e.currentTarget.value;
+	            var index = $(e.currentTarget).data("item-index");
+	            this.props.edit(index, value);
+	        }
+	    }, {
+	        key: "removeItemFromItems",
+	        value: function removeItemFromItems(event) {
+	            var key = $(event.currentTarget).data("item-index");
+	            this.props.remove(key);
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "col-md-7 text-center" },
+	                _react2.default.createElement("input", { type: this.props.item.type,
+	                    className: "input-sm",
+	                    value: this.props.item.value,
+	                    "data-item-index": this.props.item.index,
+	                    onChange: this.updateData.bind(this) }),
+	                _react2.default.createElement(
+	                    "button",
+	                    { className: "left btn-sm",
+	                        onClick: this.removeItemFromItems.bind(this),
+	                        "data-item-index": this.props.item.index },
+	                    "Remove"
+	                )
+	            );
+	        }
+	    }]);
+
+	    return Item;
+	}(_react2.default.Component);
+
+	exports.default = Item;
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
@@ -20818,231 +21091,6 @@
 	exports.default = DialogButton;
 
 /***/ },
-/* 174 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var EditOrView = function (_React$Component) {
-	    _inherits(EditOrView, _React$Component);
-
-	    function EditOrView() {
-	        _classCallCheck(this, EditOrView);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(EditOrView).apply(this, arguments));
-	    }
-
-	    _createClass(EditOrView, [{
-	        key: 'showEditPage',
-	        value: function showEditPage() {
-	            $('.edit-page').show();
-	            $('.preview-page').hide();
-	        }
-	    }, {
-	        key: 'showPreviewPage',
-	        value: function showPreviewPage() {
-	            $('.preview-page').removeClass('hidden');
-	            $('.preview-page').show();
-	            $('.edit-page').hide();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'row' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'col-md-6' },
-	                    _react2.default.createElement(
-	                        'button',
-	                        { type: 'button', className: 'btn btn-lg btn-block edit', onClick: this.showEditPage },
-	                        'Edit'
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'col-md-6' },
-	                    _react2.default.createElement(
-	                        'button',
-	                        { type: 'button', className: 'btn btn-lg btn-block preview', 'data-toggle': 'modal', onClick: this.showPreviewPage },
-	                        'Preview'
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return EditOrView;
-	}(_react2.default.Component);
-
-	exports.default = EditOrView;
-
-/***/ },
-/* 175 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _Item = __webpack_require__(176);
-
-	var _Item2 = _interopRequireDefault(_Item);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var EditPage = function (_React$Component) {
-	    _inherits(EditPage, _React$Component);
-
-	    function EditPage() {
-	        _classCallCheck(this, EditPage);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(EditPage).apply(this, arguments));
-	    }
-
-	    _createClass(EditPage, [{
-	        key: 'removeItem',
-	        value: function removeItem(key) {
-	            var _this2 = this;
-
-	            this.props.items.forEach(function (item, i) {
-	                if (item.index == key) {
-	                    _this2.props.items.splice(i, 1);
-	                }
-	            });
-
-	            this.props.edit();
-	        }
-	    }, {
-	        key: 'renderItems',
-	        value: function renderItems() {
-	            var _this3 = this;
-
-	            return this.props.items.map(function (item) {
-	                return _react2.default.createElement(_Item2.default, { item: item, key: item.index, remove: _this3.removeItem.bind(_this3), edit: _this3.props.edit });
-	            });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'container edit-page' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'row box' },
-	                    this.renderItems()
-	                )
-	            );
-	        }
-	    }]);
-
-	    return EditPage;
-	}(_react2.default.Component);
-
-	exports.default = EditPage;
-
-/***/ },
-/* 176 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Item = function (_React$Component) {
-	    _inherits(Item, _React$Component);
-
-	    function Item() {
-	        _classCallCheck(this, Item);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Item).apply(this, arguments));
-	    }
-
-	    _createClass(Item, [{
-	        key: "updateData",
-	        value: function updateData(e) {
-	            this.props.item.value = e.currentTarget.value;
-	            this.props.edit();
-	        }
-	    }, {
-	        key: "removeItemFromItems",
-	        value: function removeItemFromItems(event) {
-	            var key = $(event.currentTarget).data("item-index");
-	            this.props.remove(key);
-	        }
-	    }, {
-	        key: "render",
-	        value: function render() {
-	            return _react2.default.createElement(
-	                "div",
-	                { className: "col-md-7 text-center" },
-	                _react2.default.createElement("input", { type: this.props.item.type, className: "input-sm", value: this.props.item.value,
-	                    onChange: this.updateData.bind(this) }),
-	                _react2.default.createElement(
-	                    "button",
-	                    { className: "left btn-sm", onClick: this.removeItemFromItems.bind(this), "data-item-index": this.props.item.index },
-	                    "Remove"
-	                )
-	            );
-	        }
-	    }]);
-
-	    return Item;
-	}(_react2.default.Component);
-
-	exports.default = Item;
-
-/***/ },
 /* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -21091,7 +21139,7 @@
 	        value: function render() {
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'container preview-page hidden' },
+	                { className: 'container preview-page' },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'row box' },

@@ -5,20 +5,18 @@ class DialogBody extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            type:'date',
+            type: 'date'
         };
     }
 
-    onTypeChange (e) {
+    onTypeChange(e) {
         var type = e.currentTarget.value;
         this.setState({type: type});
     }
 
-    addItem(){
-        var component = {'type': this.state.type, 'value': '', 'index': new Date().getTime()};
-        this.props.items.push(component);
+    addItem() {
+        this.props.add(this.state.type);
         this.props.close();
-        this.props.add();
     }
 
     render() {
