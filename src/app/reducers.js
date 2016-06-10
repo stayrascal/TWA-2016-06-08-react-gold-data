@@ -24,9 +24,10 @@ function items(state = [], action) {
         case REMOVE_ITEM:
             return state.filter(item => item.index !== action.index);
         case UPDATE_ITEM:
-            let item = state.filter(item => item.index === action.index)[0];
+            /*let item = state.filter(item => item.index === action.index)[0];
             item.value = action.value;
-            return state;
+            return state;*/
+            return state.map(item => item.index === action.index ? Object.assign({}, item, {value: action.value}) : item);
         default:
             return state;
     }

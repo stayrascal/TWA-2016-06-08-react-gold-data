@@ -7,7 +7,7 @@ var config = {
     entry: app_dir + '/index.jsx',
     output:{
         path: build_dir,
-        filename: 'bundle.js',
+        filename: 'bundle.js'
     },
     /*resolve: {
         extensions: ['', '.js', '.jsx', '.json', 'less']
